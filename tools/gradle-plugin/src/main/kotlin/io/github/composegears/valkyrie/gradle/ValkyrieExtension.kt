@@ -18,7 +18,7 @@ abstract class ValkyrieExtension {
     abstract val generateAtSync: Property<Boolean>
 
     /**
-     * Output location of the generated files. Defaults to "<project-dir>/build/generated/sources/valkyrie".
+     * Output location of the generated files. Defaults to `<project-dir>/build/generated/sources/valkyrie`.
      */
     abstract val outputDirectory: DirectoryProperty
 
@@ -38,12 +38,12 @@ abstract class ValkyrieExtension {
     abstract val outputFormat: Property<OutputFormat>
 
     /**
-     * Defaults to true
+     * Defaults to `true`
      */
     abstract val useComposeColors: Property<Boolean>
 
     /**
-     * Defaults to false
+     * Defaults to `false`
      */
     abstract val generatePreview: Property<Boolean>
 
@@ -53,22 +53,22 @@ abstract class ValkyrieExtension {
     abstract val previewAnnotationType: Property<PreviewAnnotationType>
 
     /**
-     * Defaults to false
+     * Defaults to `false`
      */
     abstract val useFlatPackage: Property<Boolean>
 
     /**
-     * Defaults to false
+     * Defaults to `false`
      */
     abstract val useExplicitMode: Property<Boolean>
 
     /**
-     * Defaults to false
+     * Defaults to `false`
      */
     abstract val addTrailingComma: Property<Boolean>
 
     /**
-     * Defaults to 4
+     * Defaults to `4`
      */
     abstract val indentSize: Property<Int>
 }

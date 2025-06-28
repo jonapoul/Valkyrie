@@ -1,11 +1,17 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.buildConfig)
     `java-gradle-plugin`
 }
 
 tasks.validatePlugins {
     // TODO: https://github.com/gradle/gradle/issues/22600
     enableStricterValidation = true
+}
+
+buildConfig {
+    packageName = "io.github.composegears.valkyrie.gradle"
+    buildConfigField("COMPOSE_UI_VERSION", libs.versions.composeUi.get())
 }
 
 gradlePlugin {
@@ -63,6 +69,7 @@ dependencies {
 
     testImplementation(libs.bundles.test)
     testRuntimeOnly(libs.junit.launcher)
+
     testPluginClasspath(libs.agp.full)
     testPluginClasspath(libs.kotlin.gradle.plugin)
 }

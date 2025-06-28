@@ -1,9 +1,12 @@
+@file:OptIn(ExperimentalPathApi::class)
+
 package io.github.composegears.valkyrie.gradle
 
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.io.path.name
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.copyToRecursively
+import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
 import org.gradle.testkit.runner.GradleRunner
 
@@ -35,16 +38,16 @@ internal fun Path.writeSettingsFile() = resolve("settings.gradle.kts").writeText
 
 internal fun Path.writeTestSvgs(sourceSet: String) {
     val destDir = resolve("src/$sourceSet/svg")
-    Files.createDirectories(destDir)
+    destDir.createDirectories()
 
     val sourceDir = Paths.get(System.getProperty("test.dir.svg"))
-    Files.list(sourceDir).forEach { p -> Files.copy(p, destDir.resolve(p.name)) }
+    sourceDir.copyToRecursively(destDir, followLinks = true)
 }
 
 internal fun Path.writeTestDrawables(sourceSet: String) {
     val destDir = resolve("src/$sourceSet/res/drawable")
-    Files.createDirectories(destDir)
+    destDir.createDirectories()
 
     val sourceDir = Paths.get(System.getProperty("test.dir.xml"))
-    Files.list(sourceDir).forEach { p -> Files.copy(p, destDir.resolve(p.name)) }
+    sourceDir.copyToRecursively(destDir, followLinks = true)
 }

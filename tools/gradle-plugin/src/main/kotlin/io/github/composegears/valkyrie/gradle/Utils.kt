@@ -32,6 +32,7 @@ private val ANDROID_PLUGIN_IDS = listOf(
     "com.android.application",
     "com.android.library",
     "com.android.test",
+    "com.android.dynamic-feature",
 )
 
 internal fun Project.packageNameOrThrow(): Provider<String?> = provider {
@@ -66,8 +67,7 @@ internal fun KotlinSourceSet.findDrawableFiles(): FileCollection = project
 
 internal fun Project.isAndroid(): Boolean = plugins.hasPlugin("com.android.base")
 
-private const val COMPOSE_UI_VERSION = "1.8.3"
-private const val COMPOSE_UI = "androidx.compose.ui:ui:$COMPOSE_UI_VERSION"
+private const val COMPOSE_UI = "androidx.compose.ui:ui:${BuildConfig.COMPOSE_UI_VERSION}"
 
 internal fun Project.addDependencies(sourceSet: KotlinSourceSet, isMultiplatform: Boolean) {
     if (isMultiplatform) {

@@ -28,23 +28,23 @@ class ValkyrieGradlePlugin : Plugin<Project> {
             }
         }
 
-        afterEvaluate {
-            val codegenTasks = tasks.withType(GenerateSvgImageVectorTask::class.java)
+        val codegenTasks = tasks.withType(GenerateSvgImageVectorTask::class.java)
 
-            // Run generation immediately if we're syncing Intellij/Android Studio - helps to speed up dev cycle
-            val isIdeSyncing = System.getProperty("idea.sync.active") == "true"
-            if (extension.generateAtSync.getOrElse(false) && isIdeSyncing) {
-                tasks.findByName("prepareKotlinIdeaImport")?.dependsOn(codegenTasks)
-            }
+        // Run generation immediately if we're syncing Intellij/Android Studio - helps to speed up dev cycle
+        val isIdeSyncing = System.getProperty("idea.sync.active") == "true"
+        if (extension.generateAtSync.getOrElse(false) && isIdeSyncing) {
+            tasks.findByName("prepareKotlinIdeaImport")?.dependsOn(codegenTasks)
+        }
 
-            // Create a wrapper task to invoke all other codegen tasks
-            tasks.register(GenerateSvgImageVectorTask.TASK_NAME) { task ->
-                task.group = GenerateSvgImageVectorTask.TASK_GROUP
-                task.dependsOn(codegenTasks)
-            }
+        // Create a wrapper task to invoke all other codegen tasks
+        tasks.register(GenerateSvgImageVectorTask.TASK_NAME) { task ->
+            task.group = GenerateSvgImageVectorTask.TASK_GROUP
+            task.dependsOn(codegenTasks)
+        }
 
-            // Run generation before any kind of kotlin source processing
-            tasks.withType(AbstractKotlinCompile::class.java).configureEach { it.dependsOn(codegenTasks) }
+        // Run generation before any kind of kotlin source processing
+        tasks.withType(AbstractKotlinCompile::class.java).configureEach {
+            it.dependsOn(codegenTasks)
         }
     }
 
