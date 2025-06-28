@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.buildConfig)
+    alias(libs.plugins.valkyrie.kover)
     `java-gradle-plugin`
 }
 
