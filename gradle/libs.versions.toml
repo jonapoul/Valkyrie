@@ -1,7 +1,6 @@
 [versions]
 agp = "8.10.0"
 compose = "1.8.2"
-composeUi = "1.8.3"
 intellij = "2.6.0"
 jacoco = "0.8.13"
 kotlin = "2.2.0"
@@ -31,6 +30,7 @@ mockk = "io.mockk:mockk:1.14.4"
 
 ktlint = "com.pinterest.ktlint:ktlint-cli:1.6.0"
 composeRules = "io.nlopez.compose.rules:ktlint:0.4.22"
+composeUi = "androidx.compose.ui:ui:1.8.3"
 
 agp-api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
 agp-full = { module = "com.android.tools.build:gradle", version.ref = "agp" }

@@ -12,7 +12,7 @@ tasks.validatePlugins {
 
 buildConfig {
     packageName = "io.github.composegears.valkyrie.gradle"
-    buildConfigField("COMPOSE_UI_VERSION", libs.versions.composeUi.get())
+    buildConfigField("COMPOSE_UI_VERSION", libs.composeUi.get().version)
 }
 
 gradlePlugin {

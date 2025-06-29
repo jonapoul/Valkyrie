@@ -5,11 +5,13 @@ import assertk.assertions.contains
 import assertk.assertions.doesNotContain
 import assertk.assertions.isEqualTo
 import io.github.composegears.valkyrie.gradle.GenerateSvgImageVectorTask.Companion.TASK_NAME
-import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createDirectories
+import kotlin.io.path.name
+import kotlin.io.path.readText
+import kotlin.io.path.walk
 import kotlin.io.path.writeText
-import org.gradle.api.internal.project.DefaultProject
-import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.BeforeEach
@@ -19,16 +21,9 @@ import org.junit.jupiter.api.io.TempDir
 class ValkyrieGradlePluginTest {
     @TempDir lateinit var root: Path
 
-    private lateinit var project: DefaultProject
-
     @BeforeEach
     fun before() {
         root.writeSettingsFile()
-        project = ProjectBuilder
-            .builder()
-            .withProjectDir(root.toFile())
-            .build()
-            as DefaultProject
     }
 
     @Test
@@ -125,13 +120,16 @@ class ValkyrieGradlePluginTest {
 
         // then
         assertThat(result.task(":$TASK_NAME")?.outcome).isEqualTo(SUCCESS)
-        assertThat(result.output).contains("Generated 4 ImageVectors in package x.y.z")
-        assertThat(result.output).contains("LinearGradient.kt")
-        assertThat(result.output).contains("RadialGradient.kt")
-        assertThat(result.output).contains("ClipPathGradient.kt")
-        assertThat(result.output).contains("LinearGradientWithStroke.kt")
+        assertThat(result.output).contains(
+            "Generated 4 ImageVectors in package x.y.z",
+            "LinearGradient.kt",
+            "RadialGradient.kt",
+            "ClipPathGradient.kt",
+            "LinearGradientWithStroke.kt",
+        )
     }
 
+    @OptIn(ExperimentalPathApi::class)
     @Test
     fun `Generate from test SVGs with custom config`() {
         // given
@@ -167,15 +165,17 @@ class ValkyrieGradlePluginTest {
 
         // then the expected files are printed to log
         assertThat(result.task(":$TASK_NAME")?.outcome).isEqualTo(SUCCESS)
-        assertThat(result.output).contains("Generated 4 ImageVectors in package x.y.z")
-        assertThat(result.output).contains("LinearGradient.kt")
-        assertThat(result.output).contains("RadialGradient.kt")
-        assertThat(result.output).contains("ClipPathGradient.kt")
-        assertThat(result.output).contains("LinearGradientWithStroke.kt")
+        assertThat(result.output).contains(
+            "Generated 4 ImageVectors in package x.y.z",
+            "LinearGradient.kt",
+            "RadialGradient.kt",
+            "ClipPathGradient.kt",
+            "LinearGradientWithStroke.kt",
+        )
 
         // and the LinearGradient file is created with the right visibility, parent pack, nested pack, etc
-        val linearGradientKt = project
-            .fileTree(root)
+        val linearGradientKt = root
+            .walk()
             .first { it.name == "LinearGradient.kt" }
             .readText()
         assertThat(linearGradientKt).contains("public val MyIconPack.MyNestedPack.LinearGradient: ImageVector")
@@ -273,11 +273,12 @@ class ValkyrieGradlePluginTest {
         root.writeTestSvgs(sourceSet = "main")
 
         // First run generates the outputs
-        val result = runTask(root, TASK_NAME).build()
-        assertThat(result.task(":$TASK_NAME")?.outcome).isEqualTo(SUCCESS)
+        val runner = buildRunner(root)
+        val result1 = runner.withArguments(TASK_NAME, "--configuration-cache").build()
+        assertThat(result1.task(":$TASK_NAME")?.outcome).isEqualTo(SUCCESS)
 
         // Second run doesn't need to - no inputs have changed
-        val result2 = runTask(root, TASK_NAME).build()
+        val result2 = runner.withArguments(TASK_NAME, "--configuration-cache").build()
         assertThat(result2.task(":$TASK_NAME")?.outcome).isEqualTo(UP_TO_DATE)
     }
 
@@ -332,7 +333,7 @@ class ValkyrieGradlePluginTest {
         )
 
         val sourceDir = root.resolve("src/main/kotlin/")
-        Files.createDirectory(sourceDir)
+        sourceDir.createDirectories()
         sourceDir.resolve("Test.kt").writeText(
             """
                 import com.example.app.LinearGradient
